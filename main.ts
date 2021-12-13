@@ -4,7 +4,13 @@ namespace SpriteKind {
 }
 // makes the player use a treat, wich makes it easier to catch, but more likely to run
 function useTreat () {
-	
+    textSprite = textsprite.create("You used a treat", 1, 15)
+    textSprite.setPosition(50, 100)
+    aggravation += -1
+    timer.after(2500, function () {
+        textSprite.destroy()
+        enemyTurn()
+    })
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if (functionA) {
@@ -19,22 +25,159 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         functionA = 0
     }
     if (pointer.overlapsWith(ball)) {
+        pointer.destroy()
+        ball.destroy()
+        treat.destroy()
+        rock.destroy()
+        run.destroy()
         useBall()
     } else if (pointer.overlapsWith(treat)) {
+        pointer.destroy()
+        ball.destroy()
+        treat.destroy()
+        rock.destroy()
+        run.destroy()
         useTreat()
     } else if (pointer.overlapsWith(rock)) {
+        pointer.destroy()
+        ball.destroy()
+        treat.destroy()
+        rock.destroy()
+        run.destroy()
         useRock()
     } else {
+        pointer.destroy()
+        ball.destroy()
+        treat.destroy()
+        rock.destroy()
+        run.destroy()
         justRun()
     }
 })
 // throw a rock to deal damage, making it harder to catch, but less likely to run
 function useRock () {
-	
+    textSprite = textsprite.create("You used a rock", 1, 15)
+    textSprite.setPosition(50, 100)
+    aggravation += 1
+    timer.after(2500, function () {
+        textSprite.destroy()
+        enemyTurn()
+    })
+}
+function turnStart () {
+    functionA = 1
+    ball = sprites.create(img`
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
+        `, SpriteKind.button)
+    rock = sprites.create(img`
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        b b b b b b b b b b b b b b b b 
+        `, SpriteKind.button)
+    run = sprites.create(img`
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        e e e e e e e e e e e e e e e e 
+        `, SpriteKind.button)
+    treat = sprites.create(img`
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+        `, SpriteKind.button)
+    pointer = sprites.create(img`
+        5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
+        5 5 . . . . . . . . . . . . 5 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 . . . . . . . . . . . . . . 5 
+        5 5 . . . . . . . . . . . . 5 5 
+        5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
+        `, SpriteKind.cursor)
+    pointer.setPosition(132, 70)
+    ball.setPosition(132, 53)
+    treat.setPosition(132, 70)
+    rock.setPosition(132, 87)
+    run.setPosition(132, 104)
 }
 // make it return to the map here
 function justRun () {
-	
+    runChance = randint(0, 100)
+    if (runChance < 5) {
+        textSprite = textsprite.create("You couldn't get away", 1, 15)
+        textSprite.setPosition(50, 100)
+        if (controller.A.isPressed()) {
+            enemyTurn()
+        }
+    } else {
+        textSprite = textsprite.create("You got away savely", 1, 15)
+        textSprite.setPosition(50, 100)
+        timer.after(2500, function () {
+            textSprite.destroy()
+        })
+    }
 }
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (functionA) {
@@ -44,109 +187,66 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
         }
     }
 })
+// make the enemy make its move
+function enemyTurn () {
+    timer.after(2500, function () {
+        enemyChoise = aggravation * 10 + randint(0, 100)
+        if (enemyChoise < 95) {
+            textSprite = textsprite.create("The opposing [enter name here] fled", 1, 15)
+            textSprite.setPosition(50, 100)
+            timer.after(2500, function () {
+                textSprite.destroy()
+            })
+        } else {
+            textSprite = textsprite.create("The opposing [enter name here] is watching carefully", 1, 15)
+            textSprite.setPosition(50, 100)
+            timer.after(2500, function () {
+                textSprite.destroy()
+                turnStart()
+            })
+        }
+    })
+}
 // makes the player throw the ball if selected
 function useBall () {
-	
+    textSprite = textsprite.create("You used Ball", 1, 15)
+    textSprite.setPosition(50, 100)
+    timer.after(2500, function () {
+        textSprite.destroy()
+        catchRate = aggravation * 10 + randint(0, 100)
+        if (catchRate < 95) {
+            textSprite = textsprite.create("[enter name here] was caught", 1, 15)
+            textSprite.setPosition(50, 100)
+            timer.after(5000, function () {
+                textSprite.destroy()
+            })
+        } else {
+            timer.after(randint(2500, 5000), function () {
+                textSprite = textsprite.create("[enter name here] broke free", 1, 15)
+                textSprite.setPosition(50, 100)
+            })
+            timer.after(5000, function () {
+                textSprite.destroy()
+                enemyTurn()
+            })
+        }
+    })
 }
-let pointer: Sprite = null
-let treat: Sprite = null
+let catchRate = 0
+let enemyChoise = 0
+let runChance = 0
 let run: Sprite = null
 let rock: Sprite = null
+let treat: Sprite = null
 let ball: Sprite = null
+let pointer: Sprite = null
 let functionA = 0
-functionA = 1
-ball = sprites.create(img`
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 
-    `, SpriteKind.button)
-rock = sprites.create(img`
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    b b b b b b b b b b b b b b b b 
-    `, SpriteKind.button)
-run = sprites.create(img`
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    e e e e e e e e e e e e e e e e 
-    `, SpriteKind.button)
-treat = sprites.create(img`
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-    `, SpriteKind.button)
-pointer = sprites.create(img`
-    5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
-    5 5 . . . . . . . . . . . . 5 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 . . . . . . . . . . . . . . 5 
-    5 5 . . . . . . . . . . . . 5 5 
-    5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
-    `, SpriteKind.cursor)
-pointer.setPosition(125, 70)
-ball.setPosition(125, 53)
-treat.setPosition(125, 70)
-rock.setPosition(125, 87)
-run.setPosition(125, 104)
+let textSprite: TextSprite = null
+let aggravation = 0
+aggravation = 5
+textSprite = textsprite.create("", 1, 15)
+textSprite.setPosition(50, 100)
+timer.after(2500, function () {
+    textSprite.destroy()
+    turnStart()
+})
