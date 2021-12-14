@@ -239,7 +239,7 @@ function useBall () {
                 textSprite = textsprite.create("[enter name here] broke free", 1, 15)
                 textSprite.setPosition(50, 100)
             })
-            timer.after(15000, function () {
+            timer.after(12500, function () {
                 textSprite.destroy()
                 enemyTurn()
             })
