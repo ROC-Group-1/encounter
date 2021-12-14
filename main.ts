@@ -45,7 +45,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         rock.destroy()
         run.destroy()
         useRock()
-    } else {
+    } else if (pointer.overlapsWith(run)) {
         pointer.destroy()
         ball.destroy()
         treat.destroy()
@@ -61,7 +61,16 @@ function useRock () {
     aggravation += 1
     timer.after(2500, function () {
         textSprite.destroy()
-        enemyTurn()
+        HP.value = HP.value - randint(10, 20)
+        if (HP.value == 0) {
+            textSprite = textsprite.create("The opposing [enter name here] fainted", 1, 15)
+            textSprite.setPosition(50, 100)
+            timer.after(5000, function () {
+                textSprite.destroy()
+            })
+        } else {
+            enemyTurn()
+        }
     })
 }
 function turnStart () {
@@ -156,7 +165,7 @@ function turnStart () {
         5 5 . . . . . . . . . . . . 5 5 
         5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 
         `, SpriteKind.cursor)
-    pointer.setPosition(132, 70)
+    pointer.setPosition(132, 53)
     ball.setPosition(132, 53)
     treat.setPosition(132, 70)
     rock.setPosition(132, 87)
@@ -168,9 +177,9 @@ function justRun () {
     if (runChance < 5) {
         textSprite = textsprite.create("You couldn't get away", 1, 15)
         textSprite.setPosition(50, 100)
-        if (controller.A.isPressed()) {
+        timer.after(2500, function () {
             enemyTurn()
-        }
+        })
     } else {
         textSprite = textsprite.create("You got away savely", 1, 15)
         textSprite.setPosition(50, 100)
@@ -213,19 +222,24 @@ function useBall () {
     textSprite.setPosition(50, 100)
     timer.after(2500, function () {
         textSprite.destroy()
-        catchRate = aggravation * 10 + randint(0, 100)
-        if (catchRate < 95) {
-            textSprite = textsprite.create("[enter name here] was caught", 1, 15)
-            textSprite.setPosition(50, 100)
+        catchRate = aggravation * 10 + (randint(0, 100) + HP.value)
+        if (catchRate < 200) {
             timer.after(5000, function () {
+                textSprite = textsprite.create("[enter name here] was caught", 1, 15)
+                textSprite.setPosition(50, 100)
+            })
+            timer.after(10000, function () {
                 textSprite.destroy()
             })
+            timer.after(12500, function () {
+            	
+            })
         } else {
-            timer.after(randint(2500, 5000), function () {
+            timer.after(randint(7500, 10000), function () {
                 textSprite = textsprite.create("[enter name here] broke free", 1, 15)
                 textSprite.setPosition(50, 100)
             })
-            timer.after(5000, function () {
+            timer.after(15000, function () {
                 textSprite.destroy()
                 enemyTurn()
             })
@@ -241,6 +255,7 @@ let treat: Sprite = null
 let ball: Sprite = null
 let pointer: Sprite = null
 let functionA = 0
+let HP: StatusBarSprite = null
 let textSprite: TextSprite = null
 let aggravation = 0
 aggravation = 5
@@ -248,5 +263,9 @@ textSprite = textsprite.create("", 1, 15)
 textSprite.setPosition(50, 100)
 timer.after(2500, function () {
     textSprite.destroy()
+    HP = statusbars.create(45, 4, StatusBarKind.EnemyHealth)
+    HP.max = 143
+    HP.value = 143
+    HP.setPosition(125, 17)
     turnStart()
 })
