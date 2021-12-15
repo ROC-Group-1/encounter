@@ -9,8 +9,44 @@ function useTreat () {
     aggravation += -1
     timer.after(2500, function () {
         textSprite.destroy()
-        enemyTurn()
+        berry = sprites.create(img`
+            . . . . . . . . 
+            . . . . . . . . 
+            . . . . 7 . . . 
+            . . . . 3 7 . . 
+            . . . 3 3 3 7 . 
+            . . 3 3 3 . . . 
+            . . 3 3 . . . . 
+            . . . . . . . . 
+            `, SpriteKind.Projectile)
+        berry.setPosition(25, 69)
+        berry.setVelocity(200, -84)
+        timer.after(300, function () {
+            berry.destroy()
+            enemyTurn()
+        })
     })
+}
+function getCreature () {
+    creature = sprites.create(img`
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, SpriteKind.Enemy)
+    creature.setPosition(104, 35)
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if (functionA) {
@@ -25,56 +61,84 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         functionA = 0
     }
     if (pointer.overlapsWith(ball)) {
-        removeButton()
         useBall()
+        removeButton()
     } else if (pointer.overlapsWith(treat)) {
-        removeButton()
         useTreat()
+        removeButton()
     } else if (pointer.overlapsWith(rock)) {
-        removeButton()
         useRock()
-    } else if (pointer.overlapsWith(run)) {
         removeButton()
+    } else if (pointer.overlapsWith(run)) {
         justRun()
+        removeButton()
     }
 })
 // throw a rock to deal damage, making it harder to catch, but less likely to run
 function useRock () {
+    timer.after(2500, function () {
+        textSprite.destroy()
+        if (_throw < 15) {
+            throwableRock = sprites.create(img`
+                . b b b b b . . 
+                b b b b b b b . 
+                b b b b b b b b 
+                b b b b b b b b 
+                b b b b b b b b 
+                b b b b b b b b 
+                . b b b b b b . 
+                . . b b b b . . 
+                `, SpriteKind.Projectile)
+            throwableRock.setPosition(25, 69)
+            throwableRock.setVelocity(200, -150)
+            timer.after(300, function () {
+                throwableRock.destroy()
+                textSprite = textsprite.create("The Rock missed", 1, 15)
+                textSprite.setPosition(50, 100)
+                timer.after(2500, function () {
+                    textSprite.destroy()
+                    enemyTurn()
+                })
+            })
+        } else {
+            aggravation += 1
+            throwableRock = sprites.create(img`
+                . b b b b b . . 
+                b b b b b b b . 
+                b b b b b b b b 
+                b b b b b b b b 
+                b b b b b b b b 
+                b b b b b b b b 
+                . b b b b b b . 
+                . . b b b b . . 
+                `, SpriteKind.Projectile)
+            throwableRock.setPosition(25, 69)
+            throwableRock.setVelocity(200, -84)
+            timer.after(300, function () {
+                throwableRock.destroy()
+                HP.value = HP.value - randint(10, 20)
+                if (HP.value == 0) {
+                    textSprite = textsprite.create("The opposing [enter name here] fainted", 1, 15)
+                    textSprite.setPosition(50, 100)
+                    creature.vy += 100
+                    timer.after(100, function () {
+                        creature.destroy()
+                    })
+                    timer.after(2000, function () {
+                        textSprite.destroy()
+                        timer.after(2000, function () {
+                            returnToMap()
+                        })
+                    })
+                } else {
+                    enemyTurn()
+                }
+            })
+        }
+    })
     textSprite = textsprite.create("You used a rock", 1, 15)
     textSprite.setPosition(50, 100)
     _throw = randint(0, 100)
-    while (!(controller.A.isPressed())) {
-        textSprite.destroy()
-        if (_throw < 15) {
-            timer.after(4500, function () {
-                textSprite = textsprite.create("The Rock missed", 1, 15)
-                textSprite.setPosition(50, 100)
-            })
-            while (!(controller.A.isPressed())) {
-                textSprite.destroy()
-                enemyTurn()
-            }
-        } else {
-            aggravation += 1
-            HP.value = HP.value - randint(10, 20)
-            if (HP.value == 0) {
-                textSprite = textsprite.create("The opposing [enter name here] fainted", 1, 15)
-                textSprite.setPosition(50, 100)
-                creature.vy += 100
-                timer.after(100, function () {
-                    creature.destroy()
-                })
-                while (!(controller.A.isPressed())) {
-                    textSprite.destroy()
-                    timer.after(2000, function () {
-                        returnToMap()
-                    })
-                }
-            } else {
-                enemyTurn()
-            }
-        }
-    }
 }
 function turnStart () {
     functionA = 1
@@ -188,18 +252,18 @@ function justRun () {
     if (runChance < 5) {
         textSprite = textsprite.create("You couldn't get away", 1, 15)
         textSprite.setPosition(50, 100)
-        while (!(controller.A.isPressed())) {
+        timer.after(2500, function () {
             textSprite.destroy()
             enemyTurn()
-        }
+        })
     } else {
         textSprite = textsprite.create("You got away savely", 1, 15)
         textSprite.setPosition(50, 100)
-        while (!(controller.A.isPressed())) {
-            textSprite.destroy()
-            returnToMap()
-        }
     }
+    timer.after(2500, function () {
+        textSprite.destroy()
+        returnToMap()
+    })
 }
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (functionA) {
@@ -211,7 +275,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 // make the enemy make its move
 function enemyTurn () {
-    timer.after(2500, function () {
+    timer.after(1000, function () {
         enemyChoise = aggravation * 10 + randint(0, 100)
         if (enemyChoise < 95) {
             creature.vx += 100
@@ -220,17 +284,17 @@ function enemyTurn () {
             })
             textSprite = textsprite.create("The opposing [enter name here] fled", 1, 15)
             textSprite.setPosition(50, 100)
-            while (!(controller.A.isPressed())) {
+            timer.after(2500, function () {
                 textSprite.destroy()
                 returnToMap()
-            }
+            })
         } else {
             textSprite = textsprite.create("The opposing [enter name here] is watching carefully", 1, 15)
             textSprite.setPosition(50, 100)
-            while (!(controller.A.isPressed())) {
+            timer.after(2500, function () {
                 textSprite.destroy()
                 turnStart()
-            }
+            })
         }
     })
 }
@@ -241,11 +305,48 @@ function returnToMap () {
 function useBall () {
     textSprite = textsprite.create("You used the Net Stone", 1, 15)
     textSprite.setPosition(50, 100)
-    while (!(controller.A.isPressed())) {
+    timer.after(2500, function () {
         textSprite.destroy()
+        thrownNetStone = sprites.create(img`
+            . b b b b b . . 
+            b b b b b b b . 
+            b b b b b b b b 
+            b b b b b b b b 
+            b b b b b b b b 
+            b b b b b b b b 
+            . b b b b b b . 
+            . . b b b b . . 
+            `, SpriteKind.Projectile)
+        thrownNetStone.setPosition(25, 69)
+        thrownNetStone.setVelocity(200, -84)
+        timer.after(300, function () {
+            thrownNetStone.destroy()
+            creature.destroy()
+            netStone = sprites.create(img`
+                . b b b b b . . 
+                b b b b b b b . 
+                b b b b b b b b 
+                b b b b b b b b 
+                b b b b b b b b 
+                b b b b b b b b 
+                . b b b b b b . 
+                . . b b b b . . 
+                `, SpriteKind.Projectile)
+            netStone.setPosition(104, 35)
+        })
         catchRate = aggravation * 10 + (randint(0, 100) + HP.value)
         if (catchRate < 200) {
             timer.after(5000, function () {
+                thrownNetStone = sprites.create(img`
+                    . d d d d d . . 
+                    d d d d d d d . 
+                    d d d d d d d d 
+                    d d d d d d d d 
+                    d d d d d d d d 
+                    d d d d d d d d 
+                    . d d d d d d . 
+                    . . d d d d . . 
+                    `, SpriteKind.Projectile)
                 textSprite = textsprite.create("[enter name here] was caught", 1, 15)
                 textSprite.setPosition(50, 100)
             })
@@ -257,15 +358,17 @@ function useBall () {
             })
         } else {
             timer.after(randint(7500, 10000), function () {
+                getCreature()
+                netStone.destroy()
                 textSprite = textsprite.create("[enter name here] broke free", 1, 15)
                 textSprite.setPosition(50, 100)
+                timer.after(2000, function () {
+                    textSprite.destroy()
+                    enemyTurn()
+                })
             })
-            while (!(controller.A.isPressed())) {
-                textSprite.destroy()
-                enemyTurn()
-            }
         }
-    }
+    })
 }
 function removeButton () {
     pointer.destroy()
@@ -279,12 +382,15 @@ function removeButton () {
     textRun.destroy()
 }
 let catchRate = 0
+let netStone: Sprite = null
+let thrownNetStone: Sprite = null
 let enemyChoise = 0
 let runChance = 0
 let textRun: TextSprite = null
 let textRock: TextSprite = null
 let textTreat: TextSprite = null
 let textBall: TextSprite = null
+let throwableRock: Sprite = null
 let _throw = 0
 let run: Sprite = null
 let rock: Sprite = null
@@ -292,10 +398,11 @@ let treat: Sprite = null
 let ball: Sprite = null
 let pointer: Sprite = null
 let functionA = 0
+let creature: Sprite = null
+let berry: Sprite = null
 let HP: StatusBarSprite = null
 let textSprite: TextSprite = null
 let aggravation = 0
-let creature: Sprite = null
 let character = sprites.create(img`
     a a a a a a a a a a a a a a a a 
     a a a a a a a a a a a a a a a a 
@@ -315,25 +422,7 @@ let character = sprites.create(img`
     a a a a a a a a a a a a a a a a 
     `, SpriteKind.Player)
 character.setPosition(25, 69)
-creature = sprites.create(img`
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-    `, SpriteKind.Enemy)
-creature.setPosition(104, 35)
+getCreature()
 aggravation = 5
 textSprite = textsprite.create("", 1, 15)
 textSprite.setPosition(50, 100)
